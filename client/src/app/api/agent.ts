@@ -1,15 +1,47 @@
-import axios, { AxiosError, AxiosResponse, AxiosResponseHeaders } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { toast } from 'react-toastify';
+import { history } from '../..';
+
+const sleep = () => new Promise(resolve => setTimeout(resolve, 500));
+
 
 axios.defaults.baseURL = 'http://localhost:5000/api/';
 
 const responseBody = (response: AxiosResponse) => response.data;
 
 axios.interceptors.response.use(
-  (response) => {
+  async response => {
+    await sleep();
     return response;
   },
   (error: AxiosError) => {
-    console.log('cought by interceptor');
+    const data = error.response?.data as any
+    const {status, title} = data as any
+    switch (status) {
+      case 400:
+        if(data.errors) {
+          const modelStateErrors: string[] = [];
+          for (const key in data.errors) {
+            if (data.errors[key]) {
+              modelStateErrors.push(data.errors[key]);
+            }
+          }
+          throw modelStateErrors.flat();
+        }
+        toast.error(title);
+        break;
+      case 401:
+        toast.error(title);
+        break;
+      case 500:
+       history.push({
+          pathname: '/server-error',
+          state: { error: data }
+       })
+        break;
+      default:
+        break;
+    }
     return Promise.reject(error.response);
   }
 );
