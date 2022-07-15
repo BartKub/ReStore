@@ -2,6 +2,7 @@
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,28 +10,29 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migration
 {
     [DbContext(typeof(StoreContext))]
-    partial class StoreContextModelSnapshot : ModelSnapshot
+    [Migration("20220715090512_BasketEntity")]
+    partial class BasketEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
 
-            modelBuilder.Entity("API.Entities.Basket", b =>
+            modelBuilder.Entity("API.Data.Basket", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("BuyerId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("BuyerId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.ToTable("Baskets");
                 });
 
-            modelBuilder.Entity("API.Entities.BasketItems", b =>
+            modelBuilder.Entity("API.Data.BasketItems", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -86,9 +88,9 @@ namespace API.Data.Migration
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("API.Entities.BasketItems", b =>
+            modelBuilder.Entity("API.Data.BasketItems", b =>
                 {
-                    b.HasOne("API.Entities.Basket", "Basket")
+                    b.HasOne("API.Data.Basket", "Basket")
                         .WithMany("Items")
                         .HasForeignKey("BasketId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -105,7 +107,7 @@ namespace API.Data.Migration
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("API.Entities.Basket", b =>
+            modelBuilder.Entity("API.Data.Basket", b =>
                 {
                     b.Navigation("Items");
                 });
