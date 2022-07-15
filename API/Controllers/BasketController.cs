@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
+using API.Dtos;
 using API.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +20,7 @@ public class BasketController: BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<Basket>> Get()
+    public async Task<ActionResult<BasketDto>> Get()
     {
         var basket = await GetBasketAsync();
 
@@ -27,7 +29,7 @@ public class BasketController: BaseApiController
             return NotFound();
         }
 
-        return basket;
+        return basket.AsDto();
     }
 
     [HttpPost]
@@ -55,19 +57,29 @@ public class BasketController: BaseApiController
         {
             return BadRequest();
         }
-        
-        return StatusCode(201);
+
+        return CreatedAtRoute(nameof(Get), new { id = basket.Id }, basket.AsDto());
     }
 
-    
-    
     [HttpDelete]
     public async Task<ActionResult> RemoveBasketItem(int productId, int quantity)
     {
-        //get basket
-        //remove item
-        //save
+        var basket = await GetBasketAsync();
 
+        if (basket is null)
+        {
+            return NotFound();
+        }
+
+        basket.RemoveItem(productId, quantity);
+
+        var result =  await _context.SaveChangesAsync()>0;
+
+        if (!result)
+        {
+            return BadRequest(new ProblemDetails{Title = "Problem removing item from the basket"});
+        }
+        
         return NoContent();
     }
 
