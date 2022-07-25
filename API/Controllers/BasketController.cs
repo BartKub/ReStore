@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
 using API.Dtos;
@@ -58,7 +57,7 @@ public class BasketController: BaseApiController
             return BadRequest();
         }
 
-        return CreatedAtRoute(nameof(Get), new { id = basket.Id }, basket.AsDto());
+        return CreatedAtAction(nameof(Get), basket.AsDto());
     }
 
     [HttpDelete]

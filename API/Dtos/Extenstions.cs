@@ -19,7 +19,7 @@ namespace API.Dtos
                         Price = item.Product.Price,
                         Type = item.Product.Type,
                         Brand = item.Product.Brand,
-                        Quantity = item.Product.QuantityInStock
+                        Quantity = item.Quantity
                     }).ToList()
             };
         }
