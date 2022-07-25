@@ -6,8 +6,11 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Router } from 'react-router-dom';
 import {createBrowserHistory} from 'history';
 import { StoreContextProvider } from './app/context/StoreContext';
+import { configureStore } from './app/store/configureStore';
+import { Provider } from 'react-redux';
 
 export const history = createBrowserHistory();
+const store = configureStore();
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -16,7 +19,9 @@ root.render(
   <Router history={history}>
     <React.StrictMode>
       <StoreContextProvider>
-        <App />
+        <Provider store={store}>
+          <App />
+        </Provider>
       </StoreContextProvider>
     </React.StrictMode>
   </Router>
