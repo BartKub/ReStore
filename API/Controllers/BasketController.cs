@@ -45,7 +45,10 @@ public class BasketController: BaseApiController
 
         if (product is null)
         {
-            return NotFound();
+            return BadRequest(new ProblemDetails
+            {
+                Title = "Product not found"
+            });
         }
         
         basket.AddItem(product, quantity);
