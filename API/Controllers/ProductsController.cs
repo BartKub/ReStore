@@ -7,6 +7,7 @@ using API.Entities;
 using API.Extensions;
 using API.RequestHelpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -20,7 +21,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<Product>>> GetProducts(ProductParams productParams)
+        public async Task<ActionResult<PagedList<Product>>> GetProducts([FromQuery]ProductParams productParams)
         {
             var query = _context.Products
                 .Sort (productParams.OrderBy)
@@ -31,7 +32,8 @@ namespace API.Controllers
             var products =
                 await PagedList<Product>.ToPagedList(query, productParams.PageNumber, productParams.PageSize);
 
-            Response.Headers.Add("Pagination", JsonSerializer.Serialize(products.Metadata));
+            Response.AddPaginationHeader(products.Metadata);
+            
             return products;
         }
 
@@ -46,6 +48,20 @@ namespace API.Controllers
             }
 
             return Ok(product);
+        }
+
+        [HttpGet("filters")]
+        public async Task<IActionResult> GetFilters()
+        {
+            var brands = await _context.Products.Select(p => p.Brand).Distinct().ToListAsync();
+            var types = await _context.Products.Select(p => p.Type).Distinct().ToListAsync();
+            
+            var filters = new 
+            {
+                Brands = brands,
+                Types = types
+            };
+            return Ok(filters);
         }
     }
 }
