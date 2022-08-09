@@ -75,6 +75,8 @@ function InitParams() {
         pageNumber:1,
         pageSize:6,
         orderBy: 'name',
+        brands: [],
+        types: [],
     }
 }
 
@@ -91,6 +93,10 @@ export const catalogSlice = createSlice({
     }),
     reducers: {
         setProductParams: (state, action) => {
+            state.productsLoaded = false;
+            state.productParams ={...state.productParams, ...action.payload, pageNumber: 1};
+        },
+        setPageNumber: (state, action)=>{
             state.productsLoaded = false;
             state.productParams ={...state.productParams, ...action.payload};
         },
@@ -139,4 +145,4 @@ export const catalogSlice = createSlice({
 })
 
 export const productSelectors = productsAdapter.getSelectors((state: RootState) => state.catalog);
-export const {setProductParams, resetProductParams, setMetadata} = catalogSlice.actions;
+export const {setProductParams, resetProductParams, setMetadata, setPageNumber} = catalogSlice.actions;
