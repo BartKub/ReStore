@@ -36,8 +36,6 @@ export default function Catalog() {
     <Loading message="Loading products..."></Loading>;
   }
 
-
-
   return (
     <Grid container columnSpacing ={4}>
       <Grid item xs={3}>
