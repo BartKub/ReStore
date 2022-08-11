@@ -13,6 +13,7 @@ import Box from '@mui/system/Box';
 import { Link, NavLink } from 'react-router-dom';
 import { useStoreContext } from '../context/StoreContext';
 import { useAppSelector } from '../store/configureStore';
+import SignedInMenu from './SignedInMenu';
 
 interface Props {
   darkMode: boolean;
@@ -43,6 +44,7 @@ const navStyles = {
 export default function Header({ darkMode, handleThemeChange }: Props) {
 
   const {basket} = useAppSelector(state => state.basket);
+  const {user} = useAppSelector(state => state.account);
   const itemCount = basket?.items?.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
@@ -80,13 +82,16 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
               <ShoppingCart />
             </Badge>
           </IconButton>
+          {user? (
+            <SignedInMenu/>
+          ): (
           <List sx={{ display: 'flex' }}>
-            {rightLinks.map(({ title, path }) => (
-              <ListItem key={path} component={NavLink} to={path} sx={navStyles}>
-                {title.toUpperCase()}
-              </ListItem>
-            ))}
-          </List>
+          {rightLinks.map(({ title, path }) => (
+            <ListItem key={path} component={NavLink} to={path} sx={navStyles}>
+              {title.toUpperCase()}
+            </ListItem>
+          ))}
+        </List>)}
         </Box>
       </Toolbar>
     </AppBar>
