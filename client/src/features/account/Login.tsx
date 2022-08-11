@@ -18,8 +18,9 @@ export default function LogIn() {
     password: '',
   });
 
-  const handleSubmit = () => {
-   agent.Account.login(values)
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    agent.Account.login(values)
   };
 
   function handleInputChange(event: any){
