@@ -4,9 +4,10 @@ import { useForm } from "react-hook-form";
 import { useHistory, Link } from "react-router-dom";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import agent from "../../app/api/agent";
+import { toast } from "react-toastify";
 
 export default function Register(){
-   // const history = useHistory();
+    const history = useHistory();
     const {register, handleSubmit, setError, formState: {isSubmitting, errors, isValid}} = useForm({
       mode: 'all'
     })
@@ -34,7 +35,12 @@ export default function Register(){
               Register
             </Typography>
             <Box component="form" onSubmit={handleSubmit((
-                data => agent.Account.register(data).catch(error => handleApiErrors(error))
+                data => agent.Account.register(data)
+                    .then(() => {
+                        toast.success('Registration successfull. You can now login.');
+                        history.push('/login');
+                    })
+                    .catch(error => handleApiErrors(error))
                 ))} noValidate sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
@@ -52,7 +58,7 @@ export default function Register(){
                 {...register('email', {
                     required: 'Email is required',
                     pattern: {
-                        value: /^\w+[\w-\.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/,
+                        value: /^\w+[\w-.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/,
                         message: 'Email is invalid'
                     }
                 })}
