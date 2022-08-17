@@ -21,7 +21,7 @@ public class BasketController: BaseApiController
     [HttpGet]
     public async Task<ActionResult<BasketDto>> Get()
     {
-        var basket = await GetBasketAsync();
+        var basket = await GetBasketAsync(GetBuyerId());
 
         if (basket is null)
         {
@@ -34,7 +34,7 @@ public class BasketController: BaseApiController
     [HttpPost]
     public async Task<ActionResult> AddItemToBasket(int productId, int quantity)
     {
-        var basket = await GetBasketAsync();
+        var basket = await GetBasketAsync(GetBuyerId());
 
         if (basket == null)
         {
@@ -66,7 +66,7 @@ public class BasketController: BaseApiController
     [HttpDelete]
     public async Task<ActionResult> RemoveBasketItem(int productId, int quantity)
     {
-        var basket = await GetBasketAsync();
+        var basket = await GetBasketAsync(GetBuyerId());
 
         if (basket is null)
         {
@@ -85,26 +85,41 @@ public class BasketController: BaseApiController
         return NoContent();
     }
 
-    private async Task<Basket> GetBasketAsync()
+    private async Task<Basket> GetBasketAsync(string buyerId)
     {
-        var buyerId = Request.Cookies["buyerId"];
-        
+        if (string.IsNullOrEmpty(buyerId))
+        {
+            Response.Cookies.Delete("buyerId");
+            return null;
+        }
+       
         return await _context.Baskets
             .Include(x => x.Items)
             .ThenInclude(x => x.Product)
             .FirstOrDefaultAsync(x => x.BuyerId == buyerId);
     }
 
+    private string GetBuyerId()
+    {
+        return User.Identity?.Name ?? Request.Cookies["buyerId"];
+    }
+
     private Basket CreateBasket()
     {
-        var buyerId = Guid.NewGuid().ToString();
-        var cookieOptions = new CookieOptions
-        {
-            IsEssential = true,
-            Expires = DateTime.Now.AddDays(30)
-        };
+        var buyerId = User.Identity?.Name;
 
-        Response.Cookies.Append("buyerId", buyerId, cookieOptions);
+        if (string.IsNullOrEmpty(buyerId))
+        {
+            buyerId = Guid.NewGuid().ToString();
+            var cookieOptions = new CookieOptions
+            {
+                IsEssential = true,
+                Expires = DateTime.Now.AddDays(30)
+            };
+
+            Response.Cookies.Append("buyerId", buyerId, cookieOptions);
+        }
+      
         var basket = new Basket {BuyerId = buyerId};
         _context.Baskets.Add(basket);
         return basket;
