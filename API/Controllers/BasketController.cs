@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using API.Data;
 using API.Dtos;
 using API.Entities;
+using API.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
