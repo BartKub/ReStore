@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using API.Entities.OrderAggregate;
+using Microsoft.AspNetCore.Identity;
 
-namespace API.Entities
+namespace API.Entities;
+
+public class User: IdentityUser<int>
 {
-    public class User: IdentityUser
-    {
-    }
+    public UserAddress UserAddress { get; set; }
 }
