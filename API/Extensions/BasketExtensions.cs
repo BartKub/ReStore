@@ -13,6 +13,8 @@ public static class Extenstions
         {
             BuyerId = basket.BuyerId,
             Id = basket.Id,
+            PaymentIntentId = basket.PaymentIntentId,
+            ClientSecret = basket.ClientSecret,
             Items = basket.Items
                 .Select(item => new BasketItemDto
                 {
